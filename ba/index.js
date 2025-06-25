@@ -1,12 +1,13 @@
 import connectDb from "./Db/index.js";
-import {app} from './app.js'
+import { app } from './app.js';
+
 connectDb()
     .then(() => {
-        app.listen(3456, () => {
-            console.log(`Server is running on port with MongoDB Connection: 3456`);
-        })
+        const server = app.listen(process.env.PORT, () => {
+            console.log(`Server is running on port with MongoDB Connection: ${process.env.PORT}`);
+        });
 
-        app.on("error", (error) => {
+        server.on("error", (error) => {
             console.error("Server error:", error);
         });
     })

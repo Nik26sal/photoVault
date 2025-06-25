@@ -1,7 +1,9 @@
+import dotenv from 'dotenv'
+dotenv.config()
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-
+import userRoutes from './routes/userRoutes.js';
 
 const app = express();
 
@@ -11,10 +13,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.use(cookieParser());
 
-
-import userRoutes from './routes/userRoutes.js';
 app.use("/user", userRoutes);
-// Error handling middleware
+
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).json({ message: 'Internal server error' });
