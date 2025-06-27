@@ -1,6 +1,3 @@
-// src/components/About.js
-
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const About = () => {
@@ -11,24 +8,29 @@ const About = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <div className="bg-white p-8 rounded-lg shadow-md w-4/5 md:w-1/2 lg:w-1/3">
-        <h1 className="text-3xl font-bold mb-4 text-center">About This Project</h1>
-        <p className="text-gray-700 mb-4">
-          Welcome to our unique platform dedicated to preserving and cherishing your precious past memories. Our website serves as a digital time capsule where you can upload and store pictures that hold significant memories from your past. Whether it's a family gathering, a childhood memory, a favorite vacation spot, or any special moment, our platform ensures that these memories are securely preserved and easily accessible for you to revisit and share.
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white flex items-center justify-center px-4">
+      <div className="bg-white p-8 md:p-10 rounded-3xl shadow-2xl max-w-3xl w-full">
+        <h1 className="text-4xl font-extrabold text-center text-indigo-700 mb-6">
+          About This Project
+        </h1>
+
+        <p className="text-gray-700 text-base leading-relaxed mb-4">
+          Welcome to our unique platform dedicated to preserving and cherishing your precious past memories. This is your digital time capsule where you can upload and store photos that capture meaningful moments — from family gatherings and childhood memories to your favorite vacation spots and life milestones.
         </p>
-        <p className="text-gray-700 mb-6">
-          Our platform is built with the latest technologies, including React and React Router DOM, to provide a seamless and user-friendly experience. We understand the value of your memories and have designed this website to make the process of uploading, storing, and viewing your pictures as simple and intuitive as possible.
+
+        <p className="text-gray-700 text-base leading-relaxed mb-6">
+          Built using modern technologies like <span className="font-semibold text-indigo-600">React</span> and <span className="font-semibold text-indigo-600">React Router DOM</span>, this platform ensures an intuitive, fast, and secure way to store and revisit the moments that matter most. It’s our mission to make your memory-keeping experience seamless and joyful.
         </p>
-        <button 
-          onClick={handleBackClick} 
-          className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-200"
+
+        <button
+          onClick={handleBackClick}
+          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 rounded-xl transition duration-200"
         >
           Back to Home
         </button>
       </div>
     </div>
   );
-}
+};
 
 export default About;

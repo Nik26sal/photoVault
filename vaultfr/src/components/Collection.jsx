@@ -1,94 +1,92 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const Collection = () => {
-    const [photos, setPhotos] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const navigate = useNavigate(); 
+  const [photos, setPhotos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        const fetchUserPhotos = async () => {
-            try {
-                const token = localStorage.getItem('token');
-                const res = await axios.get('http://localhost:3456/user/photos', {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-                setPhotos(res.data);
-                setLoading(false);
-            } catch (error) {
-                console.error('Error fetching user photos:', error);
-                setError('Failed to fetch photos. Please try again.');
-                setLoading(false);
-            }
-        };
-
-        fetchUserPhotos();
-    }, []);
-
-    const deletePhoto = async (photoId) => {
-        try {
-            console.log(`Deleting photo with ID: ${photoId}`);
-            const token = localStorage.getItem('token');
-            const response = await axios.delete(`http://localhost:3456/user/photos/${photoId}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-            console.log('Delete response:', response.data); // Log the response data
-            setPhotos(photos.filter(photo => photo._id !== photoId));
-        } catch (error) {
-            if (error.response) {
-                console.error('Error response:', error.response.data);
-                setError(error.response.data.message || 'Failed to delete photo. Please try again.');
-            } else {
-                console.error('Error message:', error.message);
-                setError('Failed to delete photo. Please try again.');
-            }
-        }
+  useEffect(() => {
+    const fetchUserPhotos = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const res = await axios.get('http://localhost:3456/user/photos', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setPhotos(res.data);
+      } catch (error) {
+        setError('Failed to fetch photos. Please try again.');
+      } finally {
+        setLoading(false);
+      }
     };
 
-    if (loading) {
-        return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
-    }
+    fetchUserPhotos();
+  }, []);
 
-    if (error) {
-        return <div className="min-h-screen flex items-center justify-center text-red-500">{error}</div>;
+  const deletePhoto = async (photoId) => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.delete(`http://localhost:3456/user/photos/${photoId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setPhotos(prev => prev.filter(photo => photo._id !== photoId));
+    } catch (error) {
+      setError(error.response?.data?.message || 'Failed to delete photo.');
     }
+  };
 
+  if (loading) {
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-            <h1 className="text-3xl font-extrabold text-gray-900 mb-6">All Photos</h1>
-
-            <div className="max-w-lg w-full bg-white shadow-md rounded-lg overflow-hidden mx-auto">
-                <div className="divide-y divide-gray-200">
-                    {photos.map((photo, index) => (
-                        <div key={index} className="p-4">
-                            <span className="block text-lg font-bold text-gray-900 mb-2">Photo {index + 1}</span>
-                            <span className="block text-sm text-gray-600">{photo.description}</span>
-                            <img src={photo.photoFiles[0]} alt={`Photo ${index + 1}`} className="mt-2" />
-                            <button
-                                onClick={() => deletePhoto(photo._id)}
-                                className="mt-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-                            >
-                                Delete
-                            </button>
-                        </div>
-                    ))}
-                </div>
-            </div>
-
-            <button
-                onClick={() => navigate('/uploadPictures')}
-                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-            >
-                Go to Upload Section
-            </button>
-        </div>
+      <div className="min-h-screen flex items-center justify-center text-lg font-semibold">
+        Loading your photos...
+      </div>
     );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-red-600 font-semibold text-lg">
+        {error}
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-indigo-100 to-white py-12 px-4 sm:px-6 lg:px-8">
+      <h1 className="text-4xl font-extrabold text-indigo-700 text-center mb-10">Your Photo Collection</h1>
+
+      <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 max-w-7xl mx-auto">
+        {photos.map((photo, index) => (
+          <div key={index} className="flex flex-col items-center">
+            <img
+              src={photo.photoFiles[0]}
+              alt={`Photo ${index + 1}`}
+              className="w-full h-72 object-cover rounded-lg shadow-md"
+            />
+            <p className="mt-2 text-sm text-gray-600 text-center px-2">{photo.description}</p>
+            <button
+              onClick={() => deletePhoto(photo._id)}
+              className="mt-2 px-4 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition"
+            >
+              Delete
+            </button>
+          </div>
+        ))}
+      </div>
+
+      <div className="flex justify-center mt-12">
+        <button
+          onClick={() => navigate('/uploadPictures')}
+          className="bg-indigo-600 text-white px-6 py-3 rounded-md text-sm font-medium hover:bg-indigo-700 transition"
+        >
+          Go to Upload Section
+        </button>
+      </div>
+    </div>
+  );
 };
 
 export default Collection;
