@@ -7,15 +7,14 @@ import { upload } from '../middlewares/multer.js';
 import cloudinary from 'cloudinary';
 
 cloudinary.config({
-    cloud_name: 'dhnzzqzap',
-    api_key: '642518419392335',
-    api_secret: 'mFSvO84Dwvvs3SX9g2d9JOBzloQ'
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.CLOUD_API_KEY ,
+    api_secret: process.env.CLOUD_API_SECRET
 });
 
 
 const router = Router();
 
-// Register a new user
 router.post("/register", async (req, res) => {
     try {
         const { fullname, username, password } = req.body;
@@ -50,7 +49,6 @@ router.post("/register", async (req, res) => {
     }
 });
 
-// Login route
 router.post('/login', async (req, res) => {
     try {
         const { username, password } = req.body;
@@ -105,7 +103,6 @@ router.post('/login', async (req, res) => {
     }
 });
 
-// Logout route
 router.post('/logout', verifyJWT, async (req, res) => {
     try {
         const options = {
@@ -122,7 +119,6 @@ router.post('/logout', verifyJWT, async (req, res) => {
     }
 });
 
-// Upload photo route
 router.post('/upload', verifyJWT, upload.array('photos'), async (req, res) => {
     try {
         const photoFiles = req.files.map(file => file.path);
@@ -149,8 +145,6 @@ router.post('/upload', verifyJWT, upload.array('photos'), async (req, res) => {
     }
 });
 
-
-// Fetch user's photos route
 router.get('/photos', verifyJWT, async (req, res) => {
     try {
         const photos = await Photo.find({ owner: req.user._id });
@@ -161,7 +155,6 @@ router.get('/photos', verifyJWT, async (req, res) => {
     }
 });
 
-// Delete photo route
 router.delete('/photos/:id', verifyJWT, async (req, res) => {
     try {
         const photoId = req.params.id;

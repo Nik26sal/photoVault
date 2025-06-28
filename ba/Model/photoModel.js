@@ -2,7 +2,7 @@ import mongoose, { Schema } from 'mongoose';
 
 const photoSchema = new Schema({
     photoFiles: {
-        type: [String], // Array of strings to store multiple photo URLs
+        type: [String],
         required: true,
     },
     description: {
@@ -11,11 +11,11 @@ const photoSchema = new Schema({
     },
     owner: {
         type: Schema.Types.ObjectId,
-        ref: "User", // Reference to the User model for ownership
+        ref: "User",
         required: true
     }
 }, {
-    timestamps: true // Automatically manage createdAt and updatedAt timestamps
+    timestamps: true 
 });
 
 export const Photo = mongoose.model('Photo', photoSchema);
