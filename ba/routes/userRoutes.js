@@ -1,3 +1,5 @@
+import dotenv from 'dotenv'
+dotenv.config()
 import { Router } from 'express';
 import jwt from 'jsonwebtoken';
 import { User } from '../Model/userModel.js';
@@ -6,6 +8,7 @@ import { verifyJWT } from '../middlewares/verifyJWT.js';
 import { upload } from '../middlewares/multer.js';
 import cloudinary from 'cloudinary';
 
+console.log(process.env.CLOUD_API_KEY)
 cloudinary.config({
     cloud_name: process.env.CLOUD_NAME,
     api_key: process.env.CLOUD_API_KEY ,
