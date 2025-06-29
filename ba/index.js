@@ -14,6 +14,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.use(cookieParser());
 
+app.get('/', (req, res) => {
+    res.send('Welcome to My Server');
+});
+
 app.use("/user", userRoutes);
 
 app.use((err, req, res, next) => {
