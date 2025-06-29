@@ -1,5 +1,7 @@
 import { Link, NavLink } from 'react-router-dom';
 
+const capitalize = (str) => str && str[0].toUpperCase() + str.slice(1);
+
 const Header = ({ isLoggedIn, username, handleLogout }) => {
   return (
     <header className="shadow-md sticky top-0 z-50 bg-white">
@@ -17,7 +19,7 @@ const Header = ({ isLoggedIn, username, handleLogout }) => {
           {isLoggedIn ? (
             <>
               <span className="text-gray-700 font-medium text-sm px-2 py-1 rounded-md">
-                Welcome, {username}
+                Welcome, {capitalize(username)}
               </span>
               <button
                 onClick={handleLogout}

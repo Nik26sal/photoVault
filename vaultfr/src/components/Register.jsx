@@ -25,8 +25,8 @@ export default function Register() {
         setLoading(true);
 
         try {
-            await axios.post('http://localhost:3456/user/register', formData);
-            await axios.post('http://localhost:3456/user/login', {
+            await axios.post('https://photo-vault-yayq.vercel.app/user/register', formData);
+            await axios.post('https://photo-vault-yayq.vercel.app/user/login', {
                 username: formData.username,
                 password: formData.password,
             });
