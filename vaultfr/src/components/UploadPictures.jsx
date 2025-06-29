@@ -44,7 +44,7 @@ const UploadPictures = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.post('http://localhost:3456/user/upload', formData, {
+      const res = await axios.post('https://your-backend-project-name.vercel.app/user/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`,
@@ -67,7 +67,6 @@ const UploadPictures = () => {
       <div className="w-full max-w-xl bg-white rounded-2xl shadow-xl p-8">
         <h2 className="text-2xl font-bold text-center text-indigo-700 mb-6">Upload Your Pictures</h2>
 
-        {/* Error & Success messages */}
         {error && (
           <div className="bg-red-100 text-red-800 p-3 rounded-md mb-4 text-sm font-medium">
             {error}
