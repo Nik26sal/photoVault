@@ -20,7 +20,7 @@ const Login = () => {
     setError(null);
     setLoading(true);
     try {
-      const res = await axios.post('https://photo-vault-yayq.vercel.app/user/login', formData);
+      const res = await axios.post('http://localhost:3456/user/login', formData);
       localStorage.setItem('token', res.data.token);
       handleLogin(res.data.user.username);
       navigate('/');

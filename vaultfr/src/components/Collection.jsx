@@ -12,7 +12,7 @@ const Collection = () => {
     const fetchUserPhotos = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await axios.get('https://photo-vault-yayq.vercel.app/user/photos', {
+        const res = await axios.get('http://localhost:3456/user/photos', {
           headers: { Authorization: `Bearer ${token}` },
         });
         setPhotos(res.data);
@@ -29,7 +29,7 @@ const Collection = () => {
   const deletePhoto = async (photoId) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`https://photo-vault-yayq.vercel.app/user/photos/${photoId}`, {
+      await axios.delete(`http://localhost:3456/user/photos/${photoId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setPhotos(prev => prev.filter(photo => photo._id !== photoId));

@@ -7,9 +7,8 @@ import userRoutes from './routes/userRoutes.js';
 import connectDb from "./Db/index.js";
 
 const app = express();
-
 app.use(cors({
-  origin: 'https://photo-vault-six.vercel.app',
+  origin: '*',
   credentials: true
 }));
 app.use(express.json());

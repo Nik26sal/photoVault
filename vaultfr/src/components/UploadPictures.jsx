@@ -15,7 +15,7 @@ const UploadPictures = () => {
     const fetchUserPhotos = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await axios.get('https://photo-vault-yayq.vercel.app/user/photos', {
+        const res = await axios.get('http://localhost:3456/user/photos', {
           headers: { Authorization: `Bearer ${token}` },
         });
         const photosData = res.data.map(photo => photo.photoFiles[0]);
@@ -44,7 +44,7 @@ const UploadPictures = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.post('https://photo-vault-yayq.vercel.app/user/upload', formData, {
+      const res = await axios.post('http://localhost:3456/user/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`,
