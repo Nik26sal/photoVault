@@ -125,6 +125,7 @@ router.post('/logout', verifyJWT, async (req, res) => {
 router.post('/upload', verifyJWT, upload.array('photos'), async (req, res) => {
     try {
         const photoFiles = req.files.map(file => file.path);
+        console.log(photoFiles)
         const uploadedPhotos = await Promise.all(photoFiles.map(async filePath => {
             const result = await cloudinary.uploader.upload(filePath);
             return result.secure_url;
