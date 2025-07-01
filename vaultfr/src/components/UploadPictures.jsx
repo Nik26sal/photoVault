@@ -56,6 +56,7 @@ const UploadPictures = () => {
       setSelectedFiles([]);
       setSuccess('Photo uploaded successfully!');
     } catch (error) {
+      console.log("object")
       setError(error.response?.data?.message || 'Upload failed. Please try again.');
     } finally {
       setLoading(false);
