@@ -16,7 +16,6 @@ cloudinary.config({
 
 const router = Router();
 
-// Register
 router.post("/register", async (req, res) => {
     try {
         const { fullname, username, password } = req.body;
@@ -74,7 +73,7 @@ router.post('/login', async (req, res) => {
                 username: user.username,
                 fullname: user.fullname,
             },
-            process.env.JWT_SECRET || "default_jwt_secret", // Use env variable for production!
+            "jofjsdskvdjhwslvndkblvnhdlvbdolbhdpbhdolbnflkndlbdbidlbn",
             {
                 expiresIn: '2d',
             }
