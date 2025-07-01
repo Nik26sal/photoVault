@@ -1,5 +1,5 @@
-import dotenv from 'dotenv'
-dotenv.config()
+import dotenv from 'dotenv';
+dotenv.config();
 import { Router } from 'express';
 import jwt from 'jsonwebtoken';
 import { User } from '../Model/userModel.js';
@@ -8,16 +8,15 @@ import { verifyJWT } from '../middlewares/verifyJWT.js';
 import { upload } from '../middlewares/multer.js';
 import cloudinary from 'cloudinary';
 
-console.log(process.env.CLOUD_API_KEY)
 cloudinary.config({
     cloud_name: process.env.CLOUD_NAME,
-    api_key: process.env.CLOUD_API_KEY ,
+    api_key: process.env.CLOUD_API_KEY,
     api_secret: process.env.CLOUD_API_SECRET
 });
 
-
 const router = Router();
 
+// Register
 router.post("/register", async (req, res) => {
     try {
         const { fullname, username, password } = req.body;
@@ -26,8 +25,7 @@ router.post("/register", async (req, res) => {
             return res.status(400).json({ message: "All fields are required" });
         }
 
-        const existedUser = await User.findOne({ username });
-        console.log(existedUser)
+        const existedUser = await User.findOne({ username: username.toLowerCase() });
         if (existedUser) {
             return res.status(409).json({ message: "User already exists" });
         }
@@ -35,12 +33,10 @@ router.post("/register", async (req, res) => {
         const user = await User.create({
             fullname,
             username: username.toLowerCase(),
-            password: password
+            password
         });
-        console.log(user+"%%%%%%%%%%%%%%%%%%%%%%%%%%")
-        const createdUser = await User.findById(user._id).select("-password");
-        console.log(createdUser)
 
+        const createdUser = await User.findById(user._id).select("-password");
         if (!createdUser) {
             return res.status(500).json({ message: "Error registering user" });
         }
@@ -52,6 +48,7 @@ router.post("/register", async (req, res) => {
     }
 });
 
+// Login
 router.post('/login', async (req, res) => {
     try {
         const { username, password } = req.body;
@@ -60,7 +57,7 @@ router.post('/login', async (req, res) => {
             return res.status(400).json({ message: 'All fields are required' });
         }
 
-        const user = await User.findOne({ username });
+        const user = await User.findOne({ username: username.toLowerCase() });
 
         if (!user) {
             return res.status(404).json({ message: 'User does not exist' });
@@ -77,7 +74,7 @@ router.post('/login', async (req, res) => {
                 username: user.username,
                 fullname: user.fullname,
             },
-            "jofjsdskvdjhwslvndkblvnhdlvbdolbhdpbhdolbnflkndlbdbidlbn", 
+            process.env.JWT_SECRET || "default_jwt_secret", // Use env variable for production!
             {
                 expiresIn: '2d',
             }
@@ -99,13 +96,14 @@ router.post('/login', async (req, res) => {
 
         return res.status(200)
             .cookie('token', token, options)
-            .json({ message: 'User logged in successfully', user: userToSend, photos,token });
+            .json({ message: 'User logged in successfully', user: userToSend, photos, token });
     } catch (error) {
         console.error('Error logging in user:', error);
         return res.status(500).json({ message: 'Internal server error' });
     }
 });
 
+// Logout
 router.post('/logout', verifyJWT, async (req, res) => {
     try {
         const options = {
@@ -122,11 +120,13 @@ router.post('/logout', verifyJWT, async (req, res) => {
     }
 });
 
+// Upload Photo(s)
 router.post('/upload', verifyJWT, upload.array('photos'), async (req, res) => {
     try {
-        console.log("hello1")
+        if (!req.files || req.files.length === 0) {
+            return res.status(400).json({ message: "No photos uploaded" });
+        }
         const photoFiles = req.files.map(file => file.path);
-        console.log(photoFiles)
         const uploadedPhotos = await Promise.all(photoFiles.map(async filePath => {
             const result = await cloudinary.uploader.upload(filePath);
             return result.secure_url;
@@ -134,7 +134,7 @@ router.post('/upload', verifyJWT, upload.array('photos'), async (req, res) => {
 
         const { description } = req.body;
         const owner = req.user._id;
-        
+
         const newPhoto = new Photo({
             photoFiles: uploadedPhotos,
             description,
@@ -145,12 +145,12 @@ router.post('/upload', verifyJWT, upload.array('photos'), async (req, res) => {
 
         res.status(201).json({ message: "Photo uploaded successfully", photo: newPhoto });
     } catch (error) {
-        console.log("hello")
         console.error("Error uploading photo:", error);
         res.status(500).json({ message: "Internal server error" });
     }
 });
 
+// Get User's Photos
 router.get('/photos', verifyJWT, async (req, res) => {
     try {
         const photos = await Photo.find({ owner: req.user._id });
@@ -161,6 +161,7 @@ router.get('/photos', verifyJWT, async (req, res) => {
     }
 });
 
+// Delete Photo
 router.delete('/photos/:id', verifyJWT, async (req, res) => {
     try {
         const photoId = req.params.id;
@@ -176,7 +177,5 @@ router.delete('/photos/:id', verifyJWT, async (req, res) => {
         return res.status(500).json({ message: "Internal server error" });
     }
 });
-
-
 
 export default router;
