@@ -144,6 +144,7 @@ router.post('/upload', verifyJWT, upload.array('photos'), async (req, res) => {
 
         res.status(201).json({ message: "Photo uploaded successfully", photo: newPhoto });
     } catch (error) {
+        console.log("hello")
         console.error("Error uploading photo:", error);
         res.status(500).json({ message: "Internal server error" });
     }
