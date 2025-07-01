@@ -124,6 +124,7 @@ router.post('/logout', verifyJWT, async (req, res) => {
 
 router.post('/upload', verifyJWT, upload.array('photos'), async (req, res) => {
     try {
+        console.log("hello1")
         const photoFiles = req.files.map(file => file.path);
         console.log(photoFiles)
         const uploadedPhotos = await Promise.all(photoFiles.map(async filePath => {
