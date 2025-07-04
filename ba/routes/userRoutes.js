@@ -6,7 +6,8 @@ import { User } from '../Model/userModel.js';
 import { Photo } from '../Model/photoModel.js';
 import { verifyJWT } from '../middlewares/verifyJWT.js';
 import { upload } from '../middlewares/multer.js';
-import { uploadBufferToCloudinary } from '../middlewares/cloudinary.js';
+import { uploadCloudinary } from '../middlewares/cloudinary.js';
+
 
 const router = Router();
 
@@ -119,10 +120,7 @@ router.post('/upload', verifyJWT, upload.array('photos'), async (req, res) => {
 
         const uploadedPhotos = await Promise.all(
             req.files.map(file =>
-                uploadBufferToCloudinary(file.buffer, {
-                    resource_type: 'image',
-                    folder: process.env.CLOUDINARY_FOLDER || 'photoVault'
-                }).then(result => result.secure_url)
+                uploadCloudinary(file.path).then(result => result.secure_url)
             )
         );
 
