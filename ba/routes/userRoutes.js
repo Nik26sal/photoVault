@@ -6,13 +6,7 @@ import { User } from '../Model/userModel.js';
 import { Photo } from '../Model/photoModel.js';
 import { verifyJWT } from '../middlewares/verifyJWT.js';
 import { upload } from '../middlewares/multer.js';
-import cloudinary from 'cloudinary';
-
-cloudinary.config({
-    cloud_name: process.env.CLOUD_NAME,
-    api_key: process.env.CLOUD_API_KEY,
-    api_secret: process.env.CLOUD_API_SECRET
-});
+import { uploadBufferToCloudinary } from '../middlewares/cloudinary.js';
 
 const router = Router();
 
@@ -122,20 +116,15 @@ router.post('/upload', verifyJWT, upload.array('photos'), async (req, res) => {
         if (!req.files || req.files.length === 0) {
             return res.status(400).json({ message: "No photos uploaded" });
         }
-        const uploadedPhotos = await Promise.all(req.files.map(file =>
-            new Promise((resolve, reject) => {
-                const stream = cloudinary.uploader.upload_stream((error, result) => {
-                    if (error) {
-                        console.error("Cloudinary upload error:", error);
-                        reject(error);
-                    } else {
-                        console.log("Cloudinary upload success:", result);
-                        resolve(result.secure_url);
-                    }
-                });
-                stream.end(file.buffer);
-            })
-        ));
+
+        const uploadedPhotos = await Promise.all(
+            req.files.map(file =>
+                uploadBufferToCloudinary(file.buffer, {
+                    resource_type: 'image',
+                    folder: process.env.CLOUDINARY_FOLDER || 'photoVault'
+                }).then(result => result.secure_url)
+            )
+        );
 
         const { description } = req.body;
         const owner = req.user._id;
@@ -149,11 +138,13 @@ router.post('/upload', verifyJWT, upload.array('photos'), async (req, res) => {
         await newPhoto.save();
 
         res.status(201).json({ message: "Photo uploaded successfully", photo: newPhoto });
+
     } catch (error) {
         console.error("Error uploading photo:", error);
         res.status(500).json({ message: "Internal server error" });
     }
 });
+
 router.get('/photos', verifyJWT, async (req, res) => {
     try {
         const photos = await Photo.find({ owner: req.user._id });
