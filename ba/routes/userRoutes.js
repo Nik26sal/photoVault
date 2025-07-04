@@ -122,10 +122,18 @@ router.post('/upload', verifyJWT, upload.array('photos'), async (req, res) => {
         if (!req.files || req.files.length === 0) {
             return res.status(400).json({ message: "No photos uploaded" });
         }
-        const photoFiles = req.files.map(file => file.path);
-        const uploadedPhotos = await Promise.all(photoFiles.map(async filePath => {
-            const result = await cloudinary.uploader.upload(filePath);
-            return result.secure_url;
+        const uploadedPhotos = await Promise.all(req.files.map(async file => {
+            const result = await cloudinary.uploader.upload_stream({ resource_type: 'auto' }, (error, result) => {
+                if (error) throw error;
+                return result;
+            });
+            return await new Promise((resolve, reject) => {
+                const stream = cloudinary.uploader.upload_stream((error, result) => {
+                    if (error) reject(error);
+                    else resolve(result.secure_url);
+                });
+                stream.end(file.buffer);
+            });
         }));
 
         const { description } = req.body;
