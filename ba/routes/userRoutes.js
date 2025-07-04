@@ -124,13 +124,10 @@ router.post('/upload', verifyJWT, upload.array('photos'), async (req, res) => {
             )
         );
 
-        const { description } = req.body;
-        const owner = req.user._id;
-
         const newPhoto = new Photo({
             photoFiles: uploadedPhotos,
-            description,
-            owner
+            description: req.body.description,
+            owner : req.user._id
         });
 
         await newPhoto.save();
