@@ -47,7 +47,6 @@ router.post("/register", async (req, res) => {
     }
 });
 
-// Login
 router.post('/login', async (req, res) => {
     try {
         const { username, password } = req.body;
@@ -102,7 +101,6 @@ router.post('/login', async (req, res) => {
     }
 });
 
-// Logout
 router.post('/logout', verifyJWT, async (req, res) => {
     try {
         const options = {
@@ -119,7 +117,6 @@ router.post('/logout', verifyJWT, async (req, res) => {
     }
 });
 
-// Upload Photo(s)
 router.post('/upload', verifyJWT, upload.array('photos'), async (req, res) => {
     try {
         if (!req.files || req.files.length === 0) {
@@ -149,7 +146,6 @@ router.post('/upload', verifyJWT, upload.array('photos'), async (req, res) => {
     }
 });
 
-// Get User's Photos
 router.get('/photos', verifyJWT, async (req, res) => {
     try {
         const photos = await Photo.find({ owner: req.user._id });
@@ -160,7 +156,6 @@ router.get('/photos', verifyJWT, async (req, res) => {
     }
 });
 
-// Delete Photo
 router.delete('/photos/:id', verifyJWT, async (req, res) => {
     try {
         const photoId = req.params.id;
