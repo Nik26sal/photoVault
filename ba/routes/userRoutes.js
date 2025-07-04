@@ -125,8 +125,13 @@ router.post('/upload', verifyJWT, upload.array('photos'), async (req, res) => {
         const uploadedPhotos = await Promise.all(req.files.map(file =>
             new Promise((resolve, reject) => {
                 const stream = cloudinary.uploader.upload_stream((error, result) => {
-                    if (error) reject(error);
-                    else resolve(result.secure_url);
+                    if (error) {
+                        console.error("Cloudinary upload error:", error);
+                        reject(error);
+                    } else {
+                        console.log("Cloudinary upload success:", result);
+                        resolve(result.secure_url);
+                    }
                 });
                 stream.end(file.buffer);
             })
@@ -149,7 +154,6 @@ router.post('/upload', verifyJWT, upload.array('photos'), async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 });
-
 router.get('/photos', verifyJWT, async (req, res) => {
     try {
         const photos = await Photo.find({ owner: req.user._id });
