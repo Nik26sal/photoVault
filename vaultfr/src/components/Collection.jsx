@@ -29,6 +29,7 @@ const Collection = () => {
   const deletePhoto = async (photoId) => {
     try {
       const token = localStorage.getItem('token');
+      console.log(token)
       await axios.delete(`https://photo-vault-yayq.vercel.app/user/photos/${photoId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
